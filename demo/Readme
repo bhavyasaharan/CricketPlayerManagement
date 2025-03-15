@@ -1,0 +1,20 @@
+                    FOR OPTIMIZATION
+we we need to optimize the code for bulk delete and buk update that means if we pass two player at a time
+then our code is able to handle that ,and this we will achieve by passing list of players and then iterating them using
+for loop
+
+apart form this we need to handle the DOB issue
+
+-----------------------------------------------------------------
+                NEED TO BE DONE
+add spring security
+token concept
+paging while fetching the records from db
+documentation using swagger
+access of using and admin over apis
+
+
+-------------------------------------------------
+                DONE ALREADY
+basic crud operation
+RequestEntity -> that is Https status code
