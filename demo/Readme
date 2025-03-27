@@ -7,12 +7,33 @@ apart form this we need to handle the DOB issue
 
 -----------------------------------------------------------------
                 NEED TO BE DONE
-add spring security
-token concept
-paging while fetching the records from db
-documentation using swagger
-access of using and admin over apis
+1.add spring security
+2.token concept
+3.paging while fetching the records from db
+4.documentation using swagger
+5.access of using and admin over apis
+6.-------------------------------------------------------
+use of dtos because -> i have used id as auto generated in the player entity so when we make the dto
+                        for it we remove the id field from it , to avoid the confusion
+************For Hybrid Approach (Manual + Auto-Generation)*****************
+Use a conditional strategy (e.g., manually set ID only if it's null):
 
+java
+Copy
+@Entity
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    public void setId(Long id) {
+        // Only set ID if not already set (auto-generation takes precedence)
+        if (this.id == null) {
+            this.id = id;
+        }
+    }
+}
+----------------------------------------------
 
 -------------------------------------------------
                 DONE ALREADY

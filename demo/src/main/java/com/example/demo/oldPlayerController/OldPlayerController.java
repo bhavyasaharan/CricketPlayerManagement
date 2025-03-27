@@ -16,10 +16,10 @@ public class OldPlayerController {
     @Autowired
     private PlayerService playerService ;
 
-    @GetMapping
-    public List<Player> getAllPlayers(){
+  //  @GetMapping
+ /*   public List<Player> getAllPlayers(){
         return playerService.getAllPlayers();
-    }
+    }*/
 
     @GetMapping("/name/{name}")
     public List<Player> getPlayerByName(@PathVariable String name){

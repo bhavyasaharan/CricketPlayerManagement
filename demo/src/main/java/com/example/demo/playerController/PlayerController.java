@@ -3,6 +3,10 @@ package com.example.demo.playerController;
 import com.example.demo.playerEntity.Player;
 import com.example.demo.playerService.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +22,11 @@ public class PlayerController {
 
     @GetMapping
     public ResponseEntity<?> getPlayer(@RequestParam(required = false) Integer id ,
-                                    @RequestParam(required = false) String name,
-                                    @RequestParam(required = false) String country
-                                  ){
+                                                   @RequestParam(required = false) String name,
+                                                   @RequestParam(required = false) String country
+
+    ){
+
 
         if(id != null && name != null && country != null){
             List<Player> players= playerService.exactMatch(id,name,country);
@@ -29,7 +35,8 @@ public class PlayerController {
                     : ResponseEntity.ok(players);
         } else if (id != null) {
            Player player= playerService.getPlayerById(id);
-           return player==null
+            System.out.println("player = "+ player);
+           return player.getId()==0
                    ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Player don't exist with id = "+id)
                    : ResponseEntity.ok(player);
         } else if (name != null) {
@@ -43,6 +50,11 @@ public class PlayerController {
                     ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("No match found from this country")
                     : new ResponseEntity<>(players,HttpStatus.OK);
         } else if ((id == null && name == null && country == null)) {
+//            Page<Player> players=playerService.getAllPlayers(pageable);
+//            return players.isEmpty()
+//                    ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Empty DB")
+//                    : ResponseEntity.ok(players);
+
             List<Player> players=playerService.getAllPlayers();
             return players.isEmpty()
                     ? ResponseEntity.status(HttpStatus.NOT_FOUND).body("Empty DB")
@@ -72,7 +84,7 @@ public class PlayerController {
        Boolean p = playerService.updatePlayer(players);
        return p
                ? ResponseEntity.ok("Updated successfully ")
-               : (ResponseEntity<?>) ResponseEntity.status(HttpStatus.BAD_REQUEST);
+               : (ResponseEntity<?>) ResponseEntity.status(HttpStatus.NOT_FOUND).body("playernotfounfd");
     }
 
     @DeleteMapping

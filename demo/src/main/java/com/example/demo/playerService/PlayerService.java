@@ -1,12 +1,16 @@
 package com.example.demo.playerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import com.example.demo.playerEntity.Player;
 import com.example.demo.playerRepo.PlayerRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +24,41 @@ public class PlayerService {
 
     // get methods
 
-    public List<Player> getAllPlayers(){
-        return playerRepository.findAll();
+   // public Page<Player> getAllPlayers(Pageable pageable){
+    //   PAGINATION
+   public List<Player> getAllPlayers(){
+        int page = 0;
+        int size = 15;  // You can adjust the chunk size
+        Pageable pageable = PageRequest.of(page, size);
+
+        List<Player> allPlayers = new ArrayList<>();
+
+        Page<Player> playersPage;
+        do {
+            playersPage = playerRepository.findAll(pageable);
+            allPlayers.addAll(playersPage.getContent()); // Add retrieved players to the list
+            pageable = PageRequest.of(++page, size); // Move to the next page
+        } while (playersPage.hasNext()); // Continue until no more pages
+
+        return allPlayers;
+
+       // return playerRepository.findAll(pageable);
 
     }
+    // TRYING TO ACHIEVE PAGINATION ON SCROLLING
+    /*
+    public List<Player> getAllPlayers(){
+        int page =0 ;
+        int size=5;
+
+        List<Player> players = playerRepository.findAll();
+        players = players.stream().skip(page++)
+                .limit(size)
+                .toList();
+
+        return players;
+    }*/
+
 
     public List<Player> exactMatch(Integer id ,String name, String country){
         List<Player> players = playerRepository.fetchExactPlayer(id,name,country);
@@ -90,9 +125,10 @@ public class PlayerService {
 
         boolean flag1=false ;
         for(Player existedPlayer : existedPlayers){
-            flag1= true;
+
             Optional<Player> optionalExistingPlayer = playerRepository.findById(existedPlayer.getId()) ;
             if(optionalExistingPlayer.isPresent()){
+                flag1= true;
                 Player updatedPlayer = optionalExistingPlayer.get();
                 updatedPlayer.setPlayerName(existedPlayer.getPlayerName());
                 updatedPlayer.setDate_of_birth(existedPlayer.getDate_of_birth());
@@ -100,8 +136,6 @@ public class PlayerService {
                 playerRepository.save(updatedPlayer) ;
 
               //
-            }else {
-                System.out.println("Player with id = " + existedPlayer.getId() +" Not Exist");
             }
 
         }
@@ -124,10 +158,14 @@ public class PlayerService {
             } else {
                 // generally printing list by this way return only the instance of the list but as we have override the
                 // toString() method for the Player it will return the List values as mentioned in the method
-                System.out.println(playerRepository.findByPlayerName(name));
-                return "More than one player is found with the given name";
+
+                return "More than one player is found with the given name" + playerRepository.findByPlayerName(name);
             }
         } else if (id != null ) {
+
+            Optional<Player>player=playerRepository.findById(id);
+            if(player.isEmpty())
+                return "Player didnt exist";
             playerRepository.deleteById(id);
             return "Player with id = " + id + "deleted Successfully";
         }
